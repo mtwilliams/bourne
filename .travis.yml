@@ -1,0 +1,29 @@
+sudo: false
+language: elixir
+elixir:
+  - 1.4.1
+otp_release:
+  - 18.2.1
+services:
+  - postgres
+addons:
+  postgresql: "9.6"
+cache:
+  directories:
+    - _deps
+    - _build
+env:
+  global:
+    - DATABASE_URL=ecto://postgres:@localhost/bourne
+script:
+  - mix test
+after_script:
+  - MIX_ENV=test mix coveralls.travis
+  - mix deps.get --only docs
+  - MIX_ENV=docs mix inch.report
+notifications:
+  email:
+    recipients:
+      - m.t.williams@live.com
+    on_success: change
+    on_failure: change
