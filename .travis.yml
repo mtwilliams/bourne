@@ -1,11 +1,12 @@
 sudo: false
+dist: trusty
 language: elixir
 elixir:
   - 1.4.1
 otp_release:
   - 18.2.1
 services:
-  - postgres
+  - postgresql
 addons:
   postgresql: "9.6"
 cache:
