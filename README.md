@@ -3,14 +3,14 @@
 [![Continuous Integration](https://img.shields.io/travis/mtwilliams/bourne/master.svg)](https://travis-ci.org/mtwilliams/bourne)
 [![Code Coverage](https://img.shields.io/coveralls/mtwilliams/bourne/master.svg)](https://coveralls.io/github/mtwilliams/bourne)
 [![Documentation](http://inch-ci.org/github/mtwilliams/bourne.svg)](http://inch-ci.org/github/mtwilliams/bourne)
-[![Package](https://img.shields.io/hexpm/dt/bourne.svg)](https://hex.pm/packages/bourne)
+[![Package](https://img.gshields.io/hexpm/dt/bourne.svg)](https://hex.pm/packages/bourne)
 
 Bourne provides more powerful streaming mechanisms than those offered by [Ecto](https://github.com/elixir-ecto/ecto) or [Tributary](https://github.com/DavidAntaramian/tributary). Notably, it provides both cursor and keyset pagination methods, as well as the ability to create a `GenStage` producer with similar semantics to `GenStage.from_enumerable`.
 
 ## Example
 
 ```elixir
-defmodule My.Repo
+defmodule My.Repo do
   use Ecto.Repo, otp_app: :mine
   use Bourne
 end
