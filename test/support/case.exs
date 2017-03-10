@@ -6,6 +6,8 @@ defmodule Bourne.Test.Case do
       alias Bourne.Test.{Repo, Actor, Movie, Credit}
 
       import Ecto.Query
+
+      import Bourne.Test.Case.Helpers
     end
   end
 
@@ -18,6 +20,23 @@ defmodule Bourne.Test.Case do
 
       # Toggle with different tag?
       Bourne.Test.Data.insert!
+    end
+  end
+
+  defmodule Helpers do
+    def ascending?(rows, options \\ []), do: ordered?(rows, &>/2, options)
+    def descending?(rows, options \\ []), do: ordered?(rows, &</2, options)
+
+    defp ordered?(rows, comparer, options) do
+      key = Keyword.get(options, :key, :id)
+
+      {_, ordered} = Enum.reduce rows, {nil, true}, fn
+        (%{^key => current}, {nil, true}) -> {current, true}
+        (%{^key => current}, {_, false}) -> {current, false}
+        (%{^key => current}, {prev, true}) -> {current, comparer.(current, prev)}
+      end
+
+      ordered
     end
   end
 end

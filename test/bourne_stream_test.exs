@@ -37,7 +37,7 @@ defmodule Bourne.StreamTest do
       import Ecto.Query
       q = from(actor in Actor, order_by: [asc: actor.name])
       rows = stream(q, method: :cursor, key: :name)
-      assert ascending?(rows, key: :name), "rows are not ascending!"
+      assert ascending?(rows, key: :name), "rows are not ascending by `name`!"
     end
   end
 
@@ -77,28 +77,13 @@ defmodule Bourne.StreamTest do
       import Ecto.Query
       q = from(actor in Actor, order_by: [asc: actor.name])
       rows = stream(q, method: :keyset, key: :name)
-      assert ascending?(rows, key: :name), "rows are not ascending!"
+      assert ascending?(rows, key: :name), "rows are not ascending by `name`!"
     end
   end
 
-  defp stream(queryable, options \\ []) do
+  defp stream(queryable, options) do
     stream = Repo.stream(queryable, options)
     {:ok, rows} = Repo.transaction fn -> Enum.to_list(stream) end
     rows
-  end
-
-  defp ascending?(rows, options \\ []), do: ordered?(rows, &>/2, options)
-  defp descending?(rows, options \\ []), do: ordered?(rows, &</2, options)
-
-  defp ordered?(rows, comparer, options \\ []) do
-    key = Keyword.get(options, :key, :id)
-
-    {_, ordered} = Enum.reduce rows, {nil, true}, fn
-      (%{^key => current}, {nil, true}) -> {current, true}
-      (%{^key => current}, {_, false}) -> {current, false}
-      (%{^key => current}, {prev, true}) -> {current, comparer.(current, prev)}
-    end
-
-    ordered
   end
 end
