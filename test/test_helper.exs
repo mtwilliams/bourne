@@ -24,6 +24,7 @@ Code.require_file(migration)
 
 :ok = Ecto.Migrator.up(Bourne.Test.Repo, 0, Bourne.Test.Repo.Migrations.Setup, log: false)
 
+ExUnit.configure([])
 ExUnit.start()
 
 Ecto.Adapters.SQL.Sandbox.mode(Bourne.Test.Repo, :manual)
