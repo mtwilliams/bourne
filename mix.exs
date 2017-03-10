@@ -52,7 +52,7 @@ defmodule Bourne.Mixfile do
     maintainers: ["Michael Williams"],
     licenses: ["Public Domain"],
     links: %{"Github" => @source},
-    files: ~w(lib mix.exs README.md LICENSE.md CHANGELOG.md VERSION)
+    files: ~w(lib mix.exs README.md LICENSE CHANGELOG.md VERSION)
   ] end
 
   defp docs do [
