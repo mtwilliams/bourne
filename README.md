@@ -3,9 +3,9 @@
 [![Continuous Integration](https://img.shields.io/travis/mtwilliams/bourne/master.svg)](https://travis-ci.org/mtwilliams/bourne)
 [![Code Coverage](https://img.shields.io/coveralls/mtwilliams/bourne/master.svg)](https://coveralls.io/github/mtwilliams/bourne)
 [![Documentation](http://inch-ci.org/github/mtwilliams/bourne.svg)](http://inch-ci.org/github/mtwilliams/bourne)
-[![Package](https://img.gshields.io/hexpm/dt/bourne.svg)](https://hex.pm/packages/bourne)
+[![Package](https://img.shields.io/hexpm/v/bourne.svg)](https://hex.pm/packages/bourne)
 
-Bourne provides more powerful streaming mechanisms than those offered by [Ecto](https://github.com/elixir-ecto/ecto) or [Tributary](https://github.com/DavidAntaramian/tributary). Notably, it provides both cursor and keyset pagination methods, as well as the ability to create a `GenStage` producer with similar semantics to `GenStage.from_enumerable`.
+Bourne provides more powerful streaming mechanisms than those offered by [Ecto](https://github.com/elixir-ecto/ecto) or [Tributary](https://github.com/DavidAntaramian/tributary). Notably, it provides both *cursor* and *keyset* pagination methods, as well as the ability to create a `GenStage` producer with similar semantics to `GenStage.from_enumerable`.
 
 ## Example
 
@@ -39,7 +39,8 @@ defmodule InspectorConsumer do
   end
 end
 
-{:ok, producer} = Bourne.streamer(q, method: :keyset)
+method = Enum.take_random(~W{cursor keyset}a, 1)
+{:ok, producer} = Bourne.streamer(q, method: method)
 {:ok, consumer} = InspectorConsumer.start_link
 GenStage.sync_subscribe(consumer, to: producer)
 ```
@@ -50,7 +51,7 @@ GenStage.sync_subscribe(consumer, to: producer)
 
   ```elixir
   def deps do
-    [{:bourne, "~> 0.0.0"}]
+    [{:bourne, "~> 1.0"}]
   end
   ```
 
