@@ -67,7 +67,7 @@ if Code.ensure_loaded?(GenStage) do
       {:noreply, rows, state}
     end
     def handle_info(:exhausted, state) do
-      GenStage.async_notify(self(), :exhausted)
+      GenStage.async_info(self(), :exhausted)
       {:noreply, [], %__MODULE__{state | exhausted: true}}
     end
 
