@@ -67,6 +67,7 @@ if Code.ensure_loaded?(GenStage) do
       {:noreply, rows, state}
     end
     def handle_info(:exhausted, state) do
+      GenStage.async_info(self(), :exhausted)
       {:stop, :normal, state}
     end
 
@@ -94,7 +95,7 @@ if Code.ensure_loaded?(GenStage) do
           forward_on_demand.()
         end
 
-        GenStage.async_info(to, :exhausted)
+        send(to, :exhausted)
       end
     end
   end
