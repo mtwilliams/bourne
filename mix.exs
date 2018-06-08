@@ -36,7 +36,7 @@ defmodule Bourne.Mixfile do
 
     # Testing
     {:postgrex, "~> 0.13", only: [:test]},
-    {:gen_stage, "~> 0.11", only: [:test]},
+    {:gen_stage, "~> 0.13", only: [:test]},
 
     {:excoveralls, ">= 0.0.0", only: [:test]},
     {:inch_ex, ">= 0.0.0", only: [:dev, :docs]},
