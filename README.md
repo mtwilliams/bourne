@@ -19,7 +19,7 @@ import Ecto.Query
 q = from(actor in Actor, where: actor.born <= 1980)
 
 # You can stream through an `Enumerable`:
-Bourne.stream(q) |> Stream.each(&IO.inspect) |> Stream.run
+My.Repo.stream(q) |> Stream.each(&IO.inspect) |> Stream.run
 
 # Alternatively, you can stream through a GenStage producer:
 defmodule InspectorConsumer do
@@ -40,7 +40,7 @@ defmodule InspectorConsumer do
 end
 
 method = Enum.take_random(~W{cursor keyset}a, 1)
-{:ok, producer} = Bourne.streamer(q, method: method)
+{:ok, producer} = My.Repo.streamer(q, method: method)
 {:ok, consumer} = InspectorConsumer.start_link
 GenStage.sync_subscribe(consumer, to: producer)
 ```
