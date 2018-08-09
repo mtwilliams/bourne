@@ -8,6 +8,7 @@ _deps/
 # Ignore build artifacts and releases.
 _build/
 _rel/
+.elixir_ls
 
 #
 # Secrets

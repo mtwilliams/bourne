@@ -29,27 +29,27 @@ defmodule Bourne.StreamerTest do
     @tag db: true
     test "streams a single chunk" do
       count = Repo.aggregate(Actor, :count, :id)
-      :ok = stream(Actor, method: :cursor, chunk: count)
+      {:ok, pid, ref} = stream(Actor, method: :cursor, chunk: count)
       assert_receive(rows when length(rows) == count)
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
     end
 
     @tag db: true
     test "streams multiple chunks" do
       count = Repo.aggregate(Actor, :count, :id)
-      :ok = stream(Actor, method: :cursor, chunk: round(count / 2))
+      {:ok, pid, ref} = stream(Actor, method: :cursor, chunk: round(count / 2))
       assert_receive(rows when length(rows) == round(count / 2))
       assert_receive(rows when length(rows) == round(count / 2))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
     end
 
     @tag db: true
     test "ascending" do
       import Ecto.Query
       q = from(actor in Actor, order_by: [asc: actor.id])
-      :ok = stream(q, method: :cursor, direction: :asc)
+      {:ok, pid, ref} = stream(q, method: :cursor, direction: :asc)
       rows = assert_receive(rows when is_list(rows))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
       assert ascending?(rows), "rows are not ascending!"
     end
 
@@ -57,9 +57,9 @@ defmodule Bourne.StreamerTest do
     test "descending" do
       import Ecto.Query
       q = from(actor in Actor, order_by: [desc: actor.id])
-      :ok = stream(q, method: :cursor, direction: :desc)
+      {:ok, pid, ref} = stream(q, method: :cursor, direction: :desc)
       rows = assert_receive(rows when is_list(rows))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
       assert descending?(rows), "rows are not descending!"
     end
 
@@ -67,9 +67,9 @@ defmodule Bourne.StreamerTest do
     test "different keys" do
       import Ecto.Query
       q = from(actor in Actor, order_by: [asc: actor.name])
-      :ok = stream(q, method: :cursor, key: :name)
+      {:ok, pid, ref} = stream(q, method: :cursor, key: :name)
       rows = assert_receive(rows when is_list(rows))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
       assert ascending?(rows, key: :name), "rows are not ascending by `name`!"
     end
   end
@@ -78,27 +78,27 @@ defmodule Bourne.StreamerTest do
     @tag db: true
     test "streams a single chunk" do
       count = Repo.aggregate(Actor, :count, :id)
-      :ok = stream(Actor, method: :keyset, chunk: count)
+      {:ok, pid, ref} = stream(Actor, method: :keyset, chunk: count)
       assert_receive(rows when length(rows) == count)
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
     end
 
     @tag db: true
     test "streams multiple chunks" do
       count = Repo.aggregate(Actor, :count, :id)
-      :ok = stream(Actor, method: :keyset, chunk: round(count / 2))
+      {:ok, pid, ref} = stream(Actor, method: :keyset, chunk: round(count / 2))
       assert_receive(rows when length(rows) == round(count / 2))
       assert_receive(rows when length(rows) == round(count / 2))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
     end
 
     @tag db: true
     test "ascending" do
       import Ecto.Query
       q = from(actor in Actor, order_by: [asc: actor.id])
-      :ok = stream(q, method: :keyset, direction: :asc)
+      {:ok, pid, ref} = stream(q, method: :keyset, direction: :asc)
       rows = assert_receive(rows when is_list(rows))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
       assert ascending?(rows), "rows are not ascending!"
     end
 
@@ -106,9 +106,9 @@ defmodule Bourne.StreamerTest do
     test "descending" do
       import Ecto.Query
       q = from(actor in Actor, order_by: [desc: actor.id])
-      :ok = stream(q, method: :keyset, direction: :desc)
+      {:ok, pid, ref} = stream(q, method: :keyset, direction: :desc)
       rows = assert_receive(rows when is_list(rows))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
       assert descending?(rows), "rows are not descending!"
     end
 
@@ -116,9 +116,9 @@ defmodule Bourne.StreamerTest do
     test "different keys" do
       import Ecto.Query
       q = from(actor in Actor, order_by: [asc: actor.name])
-      :ok = stream(q, method: :keyset, key: :name)
+      {:ok, pid, ref} = stream(q, method: :keyset, key: :name)
       rows = assert_receive(rows when is_list(rows))
-      assert_receive(:exhausted)
+      assert_receive({:DOWN, ref, :process, pid, :normal})
       assert ascending?(rows, key: :name), "rows are not ascending by `name`!"
     end
   end
@@ -128,6 +128,7 @@ defmodule Bourne.StreamerTest do
     Ecto.Adapters.SQL.Sandbox.allow(Repo, self(), streamer)
     {:ok, forwarder} = Forwarder.start_link(listener: self())
     {:ok, _} = GenStage.sync_subscribe(forwarder, to: streamer)
-    :ok
+    ref = Process.monitor(streamer)
+    {:ok, streamer, ref}
   end
 end
