@@ -69,6 +69,14 @@ GenStage.sync_subscribe(consumer, to: producer)
 
 Refer to the [documentation](https://hexdocs.pm/bourne/Bourne.html).
 
+## Testing
+
+The test suite relies on a locally running postgres insatnce. You can you docker to create one quickly:
+
+```
+docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+```
+
 ## License
 
 Bourne is free and unencumbered software released into the public domain, with fallback provisions for jurisdictions that don't recognize the public domain.
