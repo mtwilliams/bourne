@@ -1,21 +1,22 @@
 Logger.configure(level: :info)
 
 # TODO(mtwilliams): Test against other adapters.
-Application.put_env :bourne, Bourne.Test.Repo, [
+Application.put_env(:bourne, Bourne.Test.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL") || "ecto://postgres:postgres@localhost/bourne",
   pool: Ecto.Adapters.SQL.Sandbox
-]
+)
 
 for file <- ~W{support/repo.exs support/schema.exs support/data.exs support/case.exs} do
   Code.require_file(file, __DIR__)
 end
 
 # Reset backing storage, start the repository, and run migration.
-_   = Ecto.Adapters.Postgres.storage_down(Bourne.Test.Repo.config)
-:ok = Ecto.Adapters.Postgres.storage_up(Bourne.Test.Repo.config)
+_ = Ecto.Adapters.Postgres.storage_down(Bourne.Test.Repo.config())
+:ok = Ecto.Adapters.Postgres.storage_up(Bourne.Test.Repo.config())
 
 {:ok, _} = Bourne.Test.Repo.start_link()
+{:ok, _} = Application.ensure_all_started(:ecto_sql)
 
 migrations = Path.join(:code.priv_dir(:bourne), "/repo/migrations")
 migration = Path.join(migrations, "1_setup.exs")
