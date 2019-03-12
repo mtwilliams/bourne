@@ -3,23 +3,17 @@ defmodule Bourne.Test.Repo.Migrations.Setup do
 
   def change do
     create table(:actors) do
-      add :name, :string
-
-      timestamps()
+      add(:name, :string)
     end
 
     create table(:movies) do
-      add :title, :string
-      add :year, :integer
-
-      timestamps()
+      add(:title, :string)
+      add(:year, :integer)
     end
 
     create table(:credits) do
-      add :actor_id, references(:actors)
-      add :movie_id, references(:movies)
-
-      timestamps()
+      add(:actor_id, references(:actors))
+      add(:movie_id, references(:movies))
     end
   end
 end
