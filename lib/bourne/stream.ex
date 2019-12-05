@@ -27,6 +27,7 @@ defimpl Enumerable, for: Bourne.Stream do
 
   def count(_), do: {:error, __MODULE__}
   def member?(_, _), do: {:error, __MODULE__}
+  def slice(_), do: {:error, __MODULE__}
 
   def reduce(_, {:halt, acc}, _fun) do
     {:halted, acc}
@@ -79,6 +80,7 @@ end
 defimpl Enumerable, for: Bourne.Stream.Chunk do
   def count(_), do: {:error, __MODULE__}
   def member?(_, _), do: {:error, __MODULE__}
+  def slice(_), do: {:error, __MODULE__}
 
   def reduce(_, {:halt, acc}, _fun) do
     {:halted, acc}

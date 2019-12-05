@@ -15,7 +15,7 @@ if Code.ensure_loaded?(GenStage) do
       # TODO(mtwilliams): Don't use a forwarder for `keyset` pagination.
       method = Keyword.get(options, :method, :cursor)
       chunk = Keyword.get(options, :chunk, 1_000)
-      stream = repo.stream(queryable, options) |> Stream.chunk(chunk, chunk, [])
+      stream = repo.stream(queryable, options) |> Stream.chunk_every(chunk, chunk, [])
       {:ok, forwarder} = forward(repo, stream, self(), transaction: (method == :cursor))
 
       consumers = case Keyword.get(options, :consumers, :temporary) do
@@ -70,7 +70,7 @@ if Code.ensure_loaded?(GenStage) do
       {:stop, :normal, %__MODULE__{state | exhausted: true}}
     end
 
-    defp forward(repo, stream, to, options \\ []) do
+    defp forward(repo, stream, to, options) do
       transaction = Keyword.get(options, :transaction, false)
 
       Task.start_link fn ->
