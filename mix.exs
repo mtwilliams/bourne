@@ -32,7 +32,7 @@ defmodule Bourne.Mixfile do
   defp applications(_), do: [:ecto, :logger]
 
   defp deps do [
-    {:ecto, "~> 2.1"},
+    {:ecto, "~> 3.3"},
 
     # Testing
     {:postgrex, "~> 0.13", only: [:test]},
